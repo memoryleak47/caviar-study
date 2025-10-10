@@ -12,10 +12,24 @@ def lines():
                     yield line.strip()
 
 def tokenize(s):
-    return s.replace("\t", " ").replace("(", " ( ").replace(")", " ) ").strip().split(" ")
+    l = s.replace("\t", " ").replace("(", " ( ").replace(")", " ) ").strip().split(" ")
+    l = [x for x in l if x]
+    return l
 
-def parse_term(s):
-    pass
+def reformat_term(s):
+    if s[0] == "(":
+        s = s[1:]
+        l = []
+        while True:
+            if s[0] == ")":
+                s = s[1:]
+                break
+            else:
+                t, s = reformat_term(s)
+                l.append(t)
+        return l, s
+    else:
+        return s[0], s[1:]
 
 for line in lines():
     if "rw!(" not in line: continue
@@ -24,7 +38,6 @@ for line in lines():
     if "if" in line: continue
 
     elems = line.split("\"")
-    lhs = elems[3]
-    rhs = elems[5]
-    print(str(tokenize(lhs)) + " ===> " + str(tokenize(rhs)))
-    break
+    lhs, [] = reformat_term(tokenize(elems[3]))
+    rhs, [] = reformat_term(tokenize(elems[5]))
+    print(str(lhs) + " ====> " + str(rhs))

@@ -11,6 +11,12 @@ def lines():
                 for line in f:
                     yield line.strip()
 
+def tokenize(s):
+    return s.replace("\t", " ").replace("(", " ( ").replace(")", " ) ").strip().split(" ")
+
+def parse_term(s):
+    pass
+
 for line in lines():
     if "rw!(" not in line: continue
 
@@ -20,4 +26,5 @@ for line in lines():
     elems = line.split("\"")
     lhs = elems[3]
     rhs = elems[5]
-    print(lhs + " ===> " + rhs)
+    print(str(tokenize(lhs)) + " ===> " + str(tokenize(rhs)))
+    break

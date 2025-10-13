@@ -2,30 +2,42 @@
 
 import os
 
+# style is "twee" or "kbc"
+STYLE = "kbc"
+
 def tokenize(s):
     l = s.replace("\t", " ").replace("(", " ( ").replace(")", " ) ").strip().split(" ")
     l = [x for x in l if x]
     return l
 
+if STYLE == "kbc":
+    const = lambda x: x.upper()
+    var = lambda x: x.lower()
+elif STYLE == "twee":
+    const = lambda x: x.lower()
+    var = lambda x: x.upper()
+else:
+    raise "oh no"
+
 def reformat_atom(a):
-    if a.startswith("?"): return a[1:].upper()
-    elif a.isnumeric(): return "num" + a
-    elif a == "-" and a[1:].isnumeric(): return "numneg" + a
-    elif a == "<": return "lt"
-    elif a == "<=": return "le"
-    elif a == ">": return "gt"
-    elif a == ">=": return "ge"
-    elif a == "&&": return "and"
-    elif a == "-": return "minus"
-    elif a == "%": return "mod"
-    elif a == "*": return "mul"
-    elif a == "+": return "plus"
-    elif a == "||": return "or"
-    elif a == "==": return "eq"
-    elif a == "/": return "div"
-    elif a == "!=": return "ne"
-    elif a == "!": return "not"
-    else: return a
+    if a.startswith("?"): return var(a[1:].upper())
+    elif a.isnumeric(): return const("num" + a)
+    elif a == "-" and a[1:].isnumeric(): return const("numneg" + a)
+    elif a == "<": return const("lt")
+    elif a == "<=": return const("le")
+    elif a == ">": return const("gt")
+    elif a == ">=": return const("ge")
+    elif a == "&&": return const("and")
+    elif a == "-": return const("minus")
+    elif a == "%": return const("mod")
+    elif a == "*": return const("mul")
+    elif a == "+": return const("plus")
+    elif a == "||": return const("or")
+    elif a == "==": return const("eq")
+    elif a == "/": return const("div")
+    elif a == "!=": return const("ne")
+    elif a == "!": return const("not")
+    else: return const(a)
 
 def reformat_list(l):
     return l[0] + "(" +  ", ".join(l[1:]) + ")"
@@ -57,6 +69,7 @@ def mk_rules():
                     for line in f:
                         yield line.strip()
 
+    outstr = ""
     for line in rule_lines():
         line = line.split("//")[0]
         if "rw!(" not in line: continue
@@ -68,16 +81,24 @@ def mk_rules():
         name = elems[1].replace("-", "_").lower()
         lhs, [] = reformat_term(tokenize(elems[3]))
         rhs, [] = reformat_term(tokenize(elems[5]))
-        print("cnf(" + name + ",axiom," + lhs + " = " + rhs + ").")
+        if STYLE == "twee":
+            outstr += "cnf(" + name + ",axiom," + lhs + " = " + rhs + ").\n"
+        elif STYLE == "kbc":
+            outstr += lhs + " = " + rhs + "\n"
+        else:
+            raise "oh no"
+    return outstr
 
-
-def convert_term():
+def eval_terms():
     file = "/home/ml47/caviar/data/prefix/evaluation.csv"
     for line in open(file, "r", encoding="utf-8").readlines()[1:]:
         [num, term, hal, i] = line.split(",")
-        #print(term)
         t, [] = reformat_term(tokenize(term))
-        print(t)
-        print()
+        yield t
 
-convert_term()
+def evaluate():
+    open("rules.rule", "w").write(mk_rules())
+    t = list(eval_terms())[0]
+    open("term.txt", "w").write(t)
+
+evaluate()

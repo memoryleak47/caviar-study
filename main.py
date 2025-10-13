@@ -9,6 +9,8 @@ def tokenize(s):
 
 def reformat_atom(a):
     if a.startswith("?"): return a[1:].upper()
+    elif a.isnumeric(): return "num" + a
+    elif a == "-" and a[1:].isnumeric(): return "numneg" + a
     elif a == "<": return "lt"
     elif a == "<=": return "le"
     elif a == ">": return "gt"
@@ -19,10 +21,6 @@ def reformat_atom(a):
     elif a == "*": return "mul"
     elif a == "+": return "plus"
     elif a == "||": return "or"
-    elif a == "0": return "zero"
-    elif a == "1": return "one"
-    elif a == "2": return "two"
-    elif a == "-1": return "minus_one"
     elif a == "==": return "eq"
     elif a == "/": return "div"
     elif a == "!=": return "ne"
@@ -72,3 +70,14 @@ def mk_rules():
         rhs, [] = reformat_term(tokenize(elems[5]))
         print("cnf(" + name + ",axiom," + lhs + " = " + rhs + ").")
 
+
+def convert_term():
+    file = "/home/ml47/caviar/data/prefix/evaluation.csv"
+    for line in open(file, "r", encoding="utf-8").readlines()[1:]:
+        [num, term, hal, i] = line.split(",")
+        #print(term)
+        t, [] = reformat_term(tokenize(term))
+        print(t)
+        print()
+
+convert_term()

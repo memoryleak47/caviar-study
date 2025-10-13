@@ -99,4 +99,6 @@ def eval_terms():
 def gen_data():
     for (i, (t, hal)) in enumerate(eval_terms()):
         i = i+1
-        open(f"data/{i}_{hal}.txt", "w").write(t)
+        open(f"data/{i:04}_{hal}.txt", "w").write(t)
+
+gen_data()

@@ -60,6 +60,7 @@ def reformat_term(s):
         return s[0], s[1:]
 
 for line in lines():
+    line = line.split("//")[0]
     if "rw!(" not in line: continue
 
     # so far we ignore side-conditions
@@ -70,3 +71,4 @@ for line in lines():
     lhs, [] = reformat_term(tokenize(elems[3]))
     rhs, [] = reformat_term(tokenize(elems[5]))
     print("cnf(" + name + ",axiom," + lhs + " = " + rhs + ").")
+print("cnf(a,axiom, fff != ggg).")

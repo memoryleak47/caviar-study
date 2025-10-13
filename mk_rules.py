@@ -57,7 +57,6 @@ def reformat_term(s):
         return reformat_list(l), s
     else:
         return reformat_atom(s[0]), s[1:]
-        return s[0], s[1:]
 
 for line in lines():
     line = line.split("//")[0]

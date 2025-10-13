@@ -16,7 +16,34 @@ def tokenize(s):
     l = [x for x in l if x]
     return l
 
+def reformat_atom(a):
+    if a.startswith("?"): return a[1:].upper()
+    elif a == "<": return "lt"
+    elif a == "<=": return "le"
+    elif a == ">": return "gt"
+    elif a == ">=": return "ge"
+    elif a == "&&": return "and"
+    elif a == "-": return "minus"
+    elif a == "%": return "mod"
+    elif a == "*": return "mul"
+    elif a == "+": return "plus"
+    elif a == "||": return "or"
+    elif a == "0": return "zero"
+    elif a == "1": return "one"
+    elif a == "2": return "two"
+    elif a == "-1": return "minus_one"
+    elif a == "==": return "eq"
+    elif a == "/": return "div"
+    elif a == "!=": return "ne"
+    elif a == "!": return "not"
+    else: return a
+
+def reformat_list(l):
+    return l[0] + "(" +  ", ".join(l[1:]) + ")"
+
 def reformat_term(s):
+    while len(s) > 2 and s[0] == "(" and s[2] == ")":
+        s = [s[1]] + s[3:]
     if s[0] == "(":
         s = s[1:]
         l = []
@@ -27,8 +54,9 @@ def reformat_term(s):
             else:
                 t, s = reformat_term(s)
                 l.append(t)
-        return l, s
+        return reformat_list(l), s
     else:
+        return reformat_atom(s[0]), s[1:]
         return s[0], s[1:]
 
 for line in lines():
@@ -40,4 +68,4 @@ for line in lines():
     elems = line.split("\"")
     lhs, [] = reformat_term(tokenize(elems[3]))
     rhs, [] = reformat_term(tokenize(elems[5]))
-    print(str(lhs) + " ====> " + str(rhs))
+    print("cnf(a,axiom," + lhs + " = " + rhs + ").")

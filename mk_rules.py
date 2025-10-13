@@ -66,6 +66,7 @@ for line in lines():
     if "if" in line: continue
 
     elems = line.split("\"")
+    name = elems[1].replace("-", "_").lower()
     lhs, [] = reformat_term(tokenize(elems[3]))
     rhs, [] = reformat_term(tokenize(elems[5]))
-    print("cnf(a,axiom," + lhs + " = " + rhs + ").")
+    print("cnf(" + name + ",axiom," + lhs + " = " + rhs + ").")

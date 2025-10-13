@@ -2,15 +2,6 @@
 
 import os
 
-def lines():
-    folder_path = "/home/ml47/caviar/src/rules"
-    for root, dirs, files in os.walk(folder_path):
-        for filename in files:
-            file_path = os.path.join(root, filename)
-            with open(file_path, "r", encoding="utf-8") as f:
-                for line in f:
-                    yield line.strip()
-
 def tokenize(s):
     l = s.replace("\t", " ").replace("(", " ( ").replace(")", " ) ").strip().split(" ")
     l = [x for x in l if x]
@@ -58,16 +49,26 @@ def reformat_term(s):
     else:
         return reformat_atom(s[0]), s[1:]
 
-for line in lines():
-    line = line.split("//")[0]
-    if "rw!(" not in line: continue
+def mk_rules():
+    def rule_lines():
+        folder_path = "/home/ml47/caviar/src/rules"
+        for root, dirs, files in os.walk(folder_path):
+            for filename in files:
+                file_path = os.path.join(root, filename)
+                with open(file_path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        yield line.strip()
 
-    # so far we ignore side-conditions
-    if "if" in line: continue
+    for line in rule_lines():
+        line = line.split("//")[0]
+        if "rw!(" not in line: continue
 
-    elems = line.split("\"")
-    name = elems[1].replace("-", "_").lower()
-    lhs, [] = reformat_term(tokenize(elems[3]))
-    rhs, [] = reformat_term(tokenize(elems[5]))
-    print("cnf(" + name + ",axiom," + lhs + " = " + rhs + ").")
-print("cnf(a,axiom, fff != ggg).")
+        # so far we ignore side-conditions
+        if "if" in line: continue
+
+        elems = line.split("\"")
+        name = elems[1].replace("-", "_").lower()
+        lhs, [] = reformat_term(tokenize(elems[3]))
+        rhs, [] = reformat_term(tokenize(elems[5]))
+        print("cnf(" + name + ",axiom," + lhs + " = " + rhs + ").")
+

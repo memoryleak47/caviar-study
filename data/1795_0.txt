@@ -1,0 +1,1 @@
+NE(PLUS(V0, NUM10), NUM0)

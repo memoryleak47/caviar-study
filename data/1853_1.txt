@@ -1,0 +1,1 @@
+EQ(MAX(DIV(MAX(MUL(V0, -40), -38), NUM2), MUL(V0, -20)), MAX(DIV(MAX(MUL(V0, -40), -38), NUM2), MUL(V0, -20)))

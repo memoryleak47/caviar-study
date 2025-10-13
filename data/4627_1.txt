@@ -1,0 +1,1 @@
+EQ(MUL(DIV(MUL(V0, -32), NUM8), NUM8), MUL(V0, -32))

@@ -1,0 +1,1 @@
+EQ(PLUS(V0, NUM6), PLUS(V0, NUM6))

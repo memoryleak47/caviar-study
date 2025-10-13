@@ -1,0 +1,1 @@
+EQ(MIN(V0, NUM7), MIN(V0, NUM7))

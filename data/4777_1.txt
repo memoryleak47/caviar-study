@@ -1,0 +1,1 @@
+EQ(MUL(DIV(MUL(V0, -126), NUM3), NUM3), MUL(V0, -126))

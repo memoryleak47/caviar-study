@@ -1,0 +1,1 @@
+EQ(MUL(DIV(MUL(MAX(MUL(V0, NUM4), -2), -1), NUM2), NUM2), MUL(MAX(MUL(V0, NUM4), -2), -1))

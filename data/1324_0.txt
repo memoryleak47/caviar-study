@@ -1,0 +1,1 @@
+GT(MIN(V0, NUM14), NUM14)

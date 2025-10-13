@@ -94,11 +94,9 @@ def eval_terms():
     for line in open(file, "r", encoding="utf-8").readlines()[1:]:
         [num, term, hal, i] = line.split(",")
         t, [] = reformat_term(tokenize(term))
-        yield t
+        yield t, hal
 
-def evaluate():
-    open("rules.rule", "w").write(mk_rules())
-    t = list(eval_terms())[0]
-    open("term.txt", "w").write(t)
-
-evaluate()
+def gen_data():
+    for (i, (t, hal)) in enumerate(eval_terms()):
+        i = i+1
+        open(f"data/{i}_{hal}.txt", "w").write(t)

@@ -4,7 +4,10 @@ import os
 import sys
 
 # style is "twee" or "kbc"
-STYLE = "kbc"
+# STYLE = "kbc"
+# output_file = "rules.rule"
+STYLE = "twee"
+output_file = "rules.p"
 
 def tokenize(s):
     l = s.replace("\t", " ").replace("(", " ( ").replace(")", " ) ").strip().split(" ")
@@ -98,49 +101,49 @@ def mk_rules():
                 assert len(args) == 3
                 op = args[2]
                 if op == "<":
-                    test_func = f"LT({rf(args[0])}, {rf(args[1])})"
+                    test_func = f"{rf('LT')}({rf(args[0])}, {rf(args[1])})"
                 elif op == "<a":
-                    test_func = f"LT({rf(args[0])}, ABS({rf(args[1])}))"
+                    test_func = f"{rf('LT')}({rf(args[0])}, {rf('ABS')}({rf(args[1])}))"
                 elif op == "<=":
-                    test_func = f"LE({rf(args[0])}, {rf(args[1])})"
+                    test_func = f"{rf('LE')}({rf(args[0])}, {rf(args[1])})"
                 elif op == "<=+1":
-                    test_func = f"LE({rf(args[0])}, PLUS({rf(args[1])}, {rf('1')}))"
+                    test_func = f"{rf('LE')}({rf(args[0])}, {rf('PLUS')}({rf(args[1])}, {rf('1')}))"
                 elif op == "<=a":
-                    test_func = f"LE({rf(args[0])}, ABS({rf(args[1])}))"
+                    test_func = f"{rf('LE')}({rf(args[0])}, {rf('ABS')}({rf(args[1])}))"
                 elif op == "<=-a":
-                    test_func = f"LE({rf(args[0])}, NEG(ABS({rf(args[1])})))"
+                    test_func = f"{rf('LE')}({rf(args[0])}, {rf('NEG')}({rf('ABS')}({rf(args[1])})))"
                 elif op == "<=-a+1":
-                    test_func = f"LE({rf(args[0])}, MINUS({rf('1')}, ABS({rf(args[1])})))"
+                    test_func = f"{rf('LE')}({rf(args[0])}, {rf('MINUS')}({rf('1')}, {rf('ABS')}({rf(args[1])})))"
                 elif op == ">":
-                    test_func = f"GT({rf(args[0])}, {rf(args[1])})"
+                    test_func = f"{rf('GT')}({rf(args[0])}, {rf(args[1])})"
                 elif op == ">a":
-                    test_func = f"GT({rf(args[0])}, ABS({rf(args[1])}))"
+                    test_func = f"{rf('GT')}({rf(args[0])}, {rf('ABS')}({rf(args[1])}))"
                 elif op == ">=":
-                    test_func = f"GE({rf(args[0])}, {rf(args[1])})"
+                    test_func = f"{rf('GE')}({rf(args[0])}, {rf(args[1])})"
                 elif op == ">=a":
-                    test_func = f"GE({rf(args[0])}, ABS({rf(args[1])}))"
+                    test_func = f"{rf('GE')}({rf(args[0])}, {rf('ABS')}({rf(args[1])}))"
                 elif op == ">=a-1":
-                    test_func = f"GE({rf(args[0])}, MINUS(ABS({rf(args[1])}), {rf('1')}))"
+                    test_func = f"{rf('GE')}({rf(args[0])}, {rf('MINUS')}({rf('ABS')}({rf(args[1])}), {rf('1')}))"
                 elif op == "!=":
-                    test_func = f"NE({rf(args[0])}, {rf(args[1])})"
+                    test_func = f"{rf('NE')}({rf(args[0])}, {rf(args[1])})"
                 elif op == "%0":
-                    test_func = f"AND(NE({rf(args[1])}, {rf('0')}), EQ(MOD({rf(args[0])}, {rf(args[1])}), {rf('0')}))"
+                    test_func = f"{rf('AND')}({rf('NE')}({rf(args[1])}, {rf('0')}), {rf('EQ')}({rf('MOD')}({rf(args[0])}, {rf(args[1])}), {rf('0')}))"
                 elif op == "!%0":
-                    test_func = f"AND(NE({rf(args[1])}, {rf('0')}), NE(MOD({rf(args[0])}, {rf(args[1])}), {rf('0')}))"
+                    test_func = f"{rf('AND')}({rf('NE')}({rf(args[1])}, {rf('0')}), {rf('NE')}({rf('MOD')}({rf(args[0])}, {rf(args[1])}), {rf('0')}))"
                 elif op == "%0<":
-                    test_func = f"AND(GT({rf(args[1])}, {rf('0')}), EQ(MOD({rf(args[0])}, {rf(args[1])}), {rf('0')}))"
+                    test_func = f"{rf('AND')}({rf('GT')}({rf(args[1])}, {rf('0')}), {rf('EQ')}({rf('MOD')}({rf(args[0])}, {rf(args[1])}), {rf('0')}))"
                 elif op == "%0>":
-                    test_func = f"AND(LT({rf(args[1])}, {rf('0')}), EQ(MOD({rf(args[0])}, {rf(args[1])}), {rf('0')}))"
+                    test_func = f"{rf('AND')}({rf('LT')}({rf(args[1])}, {rf('0')}), {rf('EQ')}({rf('MOD')}({rf(args[0])}, {rf(args[1])}), {rf('0')}))"
                 else:
                     # print("unknown operator:", op)
                     pass
             if test_func is None:
                 print("ignoring side-condition:", test, args)
                 continue
-            rhs_process = lambda lhs, rhs: f"IF({test_func}, {rhs}, {lhs})"
+            rhs_process = lambda lhs, rhs: f"{rf('IF')}({test_func}, {rhs}, {lhs})"
 
         elems = line.split("\"")
-        name = elems[1].replace("-", "_").lower()
+        name = elems[1].replace("-", "_").replace("+","_").lower()
         lhs, [] = reformat_term(tokenize(elems[3]))
         try:
             rhs, [] = reformat_term(tokenize(elems[5]))
@@ -155,24 +158,31 @@ def mk_rules():
         else:
             raise Exception("oh no")
     rules = sorted(rules)
-    rules.append(f"IF({rf('1')}, {rf('?a')}, {rf('?b')}) = {rf('?a')}")
+    if STYLE == "twee":
+        rules.append(f"cnf(if_1,axiom,{rf('IF')}({rf('1')}, {rf('?a')}, {rf('?b')}) = {rf('?a')}).")
+    else:
+        rules.append(f"{rf('IF')}({rf('1')}, {rf('?a')}, {rf('?b')}) = {rf('?a')}")
     # rule for 0 not necessary
     return "\n".join(rules)
 
 def eval_terms():
-    file = "/home/ml47/caviar/data/prefix/evaluation.csv"
+    file = "./caviar/data/prefix/evaluation.csv"
     for line in open(file, "r", encoding="utf-8").readlines()[1:]:
         [num, term, hal, i] = line.split(",")
         t, [] = reformat_term(tokenize(term))
         yield t, hal
 
 def gen_data():
+    output_folder = f"data_{STYLE}"
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
     for (i, (t, hal)) in enumerate(eval_terms()):
         i = i+1
-        open(f"data/{i:04}_{hal}.txt", "w").write(t)
+        if STYLE == "twee":
+            t = f"cnf(goal,conjecture, {t} = {rf(str(hal))})."
+        open(f"{output_folder}/{i:04}_{hal}.txt", "w").write(t)
 
-# gen_data()
+gen_data()
 
-with open("rules.rule", "w") as f:
-    
+with open(output_file, "w") as f:
     f.write(mk_rules())
